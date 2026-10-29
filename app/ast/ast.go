@@ -45,17 +45,17 @@ func (p *Program) TokenLiteral() string {
 	}
 }
 
-/* ThoosMuji statement */
-type ThoosMujiStatement struct {
+/* Thoos statement */
+type ThoosStatement struct {
 	Token token.Token
 	Name  *Identifier
 	Value Expression
 }
 
-func (tms *ThoosMujiStatement) statementNode()       {}
-func (tms *ThoosMujiStatement) TokenLiteral() string { return tms.Token.Literal }
+func (tms *ThoosStatement) statementNode()       {}
+func (tms *ThoosStatement) TokenLiteral() string { return tms.Token.Literal }
 
-func (tms *ThoosMujiStatement) String() string {
+func (tms *ThoosStatement) String() string {
 	var out bytes.Buffer
 
 	out.WriteString(tms.TokenLiteral() + " ")
@@ -100,16 +100,16 @@ func (il *FloatLiteral) expressionNode()      {}
 func (il *FloatLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *FloatLiteral) String() string       { return il.Token.Literal }
 
-/* Pathamuji statement */
-type PathaMujiStatement struct {
+/* Patha statement */
+type PathaStatement struct {
 	Token token.Token
 	Value Expression
 }
 
-func (pms *PathaMujiStatement) statementNode()       {}
-func (pms *PathaMujiStatement) TokenLiteral() string { return pms.Token.Literal }
+func (pms *PathaStatement) statementNode()       {}
+func (pms *PathaStatement) TokenLiteral() string { return pms.Token.Literal }
 
-func (pms *PathaMujiStatement) String() string {
+func (pms *PathaStatement) String() string {
 	var out bytes.Buffer
 
 	out.WriteString(pms.TokenLiteral() + " ")
@@ -209,21 +209,21 @@ func (y *BlockStatement) String() string {
 	return out.String()
 }
 
-// YEDI MUJI expression
-type YediMujiExpression struct {
+// YEDI expression
+type YediExpression struct {
 	Token        token.Token
 	Condition    Expression
 	Consequent   *BlockStatement
-	Alternatives []*NabhaeMujiExpression
+	Alternatives []*NabhaeExpression
 	Fallback     *BlockStatement
 }
 
-func (y *YediMujiExpression) expressionNode()      {}
-func (y *YediMujiExpression) TokenLiteral() string { return y.Token.Literal }
-func (y *YediMujiExpression) String() string {
+func (y *YediExpression) expressionNode()      {}
+func (y *YediExpression) TokenLiteral() string { return y.Token.Literal }
+func (y *YediExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString("yedi_muji (")
+	out.WriteString("yedi (")
 	out.WriteString(y.Condition.String())
 	out.WriteString(") ")
 	out.WriteString(y.Consequent.String())
@@ -235,24 +235,24 @@ func (y *YediMujiExpression) String() string {
 	}
 
 	if y.Fallback != nil {
-		out.WriteString("nabhae_chikne ")
+		out.WriteString("natra ")
 		out.WriteString(y.Fallback.String())
 	}
 
 	return out.String()
 }
 
-type NabhaeMujiExpression struct {
+type NabhaeExpression struct {
 	Token      token.Token
 	Condition  Expression
 	Consequent *BlockStatement
 }
 
-func (y *NabhaeMujiExpression) expressionNode()      {}
-func (y *NabhaeMujiExpression) TokenLiteral() string { return y.Token.Literal }
-func (y *NabhaeMujiExpression) String() string {
+func (y *NabhaeExpression) expressionNode()      {}
+func (y *NabhaeExpression) TokenLiteral() string { return y.Token.Literal }
+func (y *NabhaeExpression) String() string {
 	var out bytes.Buffer
-	out.WriteString("nabhae_muji (")
+	out.WriteString("nabhae (")
 	out.WriteString(y.Condition.String())
 	out.WriteString(")")
 	out.WriteString(y.Consequent.String())
@@ -260,18 +260,18 @@ func (y *NabhaeMujiExpression) String() string {
 }
 
 // kaam_gar
-type KaamGarMujiExpression struct {
+type KaamGarExpression struct {
 	Token     token.Token
 	Arguments []*Identifier
 	Body      *BlockStatement
 }
 
-func (f *KaamGarMujiExpression) expressionNode()      {}
-func (f *KaamGarMujiExpression) TokenLiteral() string { return f.Token.Literal }
-func (f *KaamGarMujiExpression) String() string {
+func (f *KaamGarExpression) expressionNode()      {}
+func (f *KaamGarExpression) TokenLiteral() string { return f.Token.Literal }
+func (f *KaamGarExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString("kaam_gar_muji(")
+	out.WriteString("kaam_gar(")
 
 	if f.Arguments != nil {
 		for i, arg := range f.Arguments {
@@ -343,26 +343,26 @@ func (a *ArrayExpression) String() string {
 	return out.String()
 }
 
-type JabasammaMujiExpression struct {
+type JabasammaExpression struct {
 	Token      token.Token
 	Condition  Expression
 	Consequent *BlockStatement
 }
 
-func (c *JabasammaMujiExpression) expressionNode() {}
-func (c *JabasammaMujiExpression) TokenLiteral() string {
+func (c *JabasammaExpression) expressionNode() {}
+func (c *JabasammaExpression) TokenLiteral() string {
 	return c.Token.Literal
 }
-func (c *JabasammaMujiExpression) String() string {
+func (c *JabasammaExpression) String() string {
 	var out bytes.Buffer
-	out.WriteString("jaba_samma_muji (")
+	out.WriteString("jaba_samma (")
 	out.WriteString(c.Condition.String())
 	out.WriteString(")")
 	out.WriteString(c.Consequent.String())
 	return out.String()
 }
 
-type GhumaMujiExpression struct {
+type GhumaExpression struct {
 	Token          token.Token
 	Initialization Statement
 	Condition      Statement
@@ -370,13 +370,13 @@ type GhumaMujiExpression struct {
 	Body           *BlockStatement
 }
 
-func (g *GhumaMujiExpression) expressionNode() {}
-func (g *GhumaMujiExpression) TokenLiteral() string {
+func (g *GhumaExpression) expressionNode() {}
+func (g *GhumaExpression) TokenLiteral() string {
 	return g.Token.Literal
 }
-func (g *GhumaMujiExpression) String() string {
+func (g *GhumaExpression) String() string {
 	var out bytes.Buffer
-	out.WriteString("ghuma_muji (")
+	out.WriteString("ghuma (")
 	out.WriteString(g.Initialization.String())
 	out.WriteString(g.Condition.String())
 	out.WriteString(g.Update.String())

@@ -1,6 +1,6 @@
 # Makefile
 
-APP_NAME := muji
+APP_NAME := mu
 APP_DIR := ./app
 BUILD_DIR := ./build
 BUILD_FILE := $(BUILD_DIR)/$(APP_NAME)

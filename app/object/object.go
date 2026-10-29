@@ -11,17 +11,17 @@ import (
 type ObjectType string
 
 const (
-	INTEGER_OBJ       ObjectType = "INTEGER"
-	FLOAT_OBJ         ObjectType = "FLOAT"
-	BOOLEAN_OBJ       ObjectType = "BOOLEAN"
-	NULL_OBJ          ObjectType = "NULL"
-	PATHA_MUJI_OBJ    ObjectType = "RETURN"
-	GALAT_MUJI_OBJ    ObjectType = "ERROR"
-	KAAM_GAR_MUJI_OBJ ObjectType = "KAAM_GAR"
-	STRING            ObjectType = "STRING"
-	BUILTIN_OBJECT    ObjectType = "BUILTIN"
-	ARRAY_OBJECT      ObjectType = "ARRAY"
-	HASHMAP_OBJECT    ObjectType = "HASHMAP"
+	INTEGER_OBJ    ObjectType = "INTEGER"
+	FLOAT_OBJ      ObjectType = "FLOAT"
+	BOOLEAN_OBJ    ObjectType = "BOOLEAN"
+	NULL_OBJ       ObjectType = "NULL"
+	PATHA_OBJ      ObjectType = "RETURN"
+	GALAT_OBJ      ObjectType = "ERROR"
+	KAAM_GAR_OBJ   ObjectType = "KAAM_GAR"
+	STRING         ObjectType = "STRING"
+	BUILTIN_OBJECT ObjectType = "BUILTIN"
+	ARRAY_OBJECT   ObjectType = "ARRAY"
+	HASHMAP_OBJECT ObjectType = "HASHMAP"
 )
 
 var (
@@ -70,9 +70,9 @@ type Boolean struct {
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) Inspect() string {
 	if b.Value {
-		return "sacho_muji"
+		return "sacho"
 	} else {
-		return "jhut_muji"
+		return "jhut"
 	}
 }
 
@@ -80,14 +80,14 @@ func (b *Boolean) Inspect() string {
 type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL_OBJ }
-func (n *Null) Inspect() string  { return "khali_muji" }
+func (n *Null) Inspect() string  { return "khali" }
 
 // Return Object to signify the end of statements execution
 type Return struct {
 	Value Object
 }
 
-func (r *Return) Type() ObjectType { return PATHA_MUJI_OBJ }
+func (r *Return) Type() ObjectType { return PATHA_OBJ }
 func (r *Return) Inspect() string  { return r.Value.Inspect() }
 
 // Error handling
@@ -95,7 +95,7 @@ type Error struct {
 	Message string
 }
 
-func (e *Error) Type() ObjectType { return GALAT_MUJI_OBJ }
+func (e *Error) Type() ObjectType { return GALAT_OBJ }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 
 // Kaam gar
@@ -105,7 +105,7 @@ type KaamGar struct {
 	Env        *Environment
 }
 
-func (f *KaamGar) Type() ObjectType { return KAAM_GAR_MUJI_OBJ }
+func (f *KaamGar) Type() ObjectType { return KAAM_GAR_OBJ }
 func (f *KaamGar) Inspect() string {
 	var out bytes.Buffer
 	params := []string{}
