@@ -1,16 +1,16 @@
-# The Muji Programming Language
+# The Mulang Programming Language
 
-Why Muji?
+Why Mulang?
 
 - Why not?
 
-Muji is a relatively small programming language (implemented in ~3500 loc) that began as my side project.
+Mulang is a relatively small programming language (implemented in ~3500 loc) that began as my side project.
 
 Since the language is small, here is the syntax:
 
 ### Assign a variable
-```muji
-thoos_muji x = 43;
+```mu
+thoos x = 43;
 ```
 
 We currently support the following data types:
@@ -26,51 +26,51 @@ Integers, floats, and strings are defined the usual way. Please note that we do 
 ### Functions
 
 Defining a function is as easy as
-```muji
-thoos_muji add = kaam_gar_muji(x, y) {
-    patha_muji x + y;
+```mu
+thoos add = kaam_gar(x, y) {
+    patha x + y;
 };
-add(6, 9);
+add(3, 4);
 ```
 
-Yes, functions should be assigned to a variable by writing out a function expression. Muji lang supports only one return value per function which is returned using the `patha_muji` keyword.
+Yes, functions should be assigned to a variable by writing out a function expression. Mulang supports only one return value per function which is returned using the `patha` keyword.
 Since functions are first class citizens, you can easily pass functions into another function.
 
 ### Arrays
 Arrays are defined the usual way.
-```muji
-thoos_muji myArr = [69, 420, 666];
+```mu
+thoos myArr = [10, 20, 30];
 ```
-Muji lang supports all types of data structures in an array like Javascript does (our inspiration)
-```muji
-thoos_muji myArr = [1, "newstring", 69.69];
+Mulang supports all types of data structures in an array like Javascript does (our inspiration)
+```mu
+thoos myArr = [1, "newstring", 3.14];
 ```
 
 Arrays can be indexed and modified as you would do in the English version of this language(JS).
 
 ### Boolean
-The two truth values in Muji lang are:
-```muji
-thoos_muji yes = sacho_muji;
-thoos_muji no = jhut_muji;
+The two truth values in Mulang are:
+```mu
+thoos yes = sacho;
+thoos no = jhut;
 ```
 
 ### Conditionals
-Only the vanilla if/if else statement (with blocks) is supported.
-```muji
+The vanilla if / else-if / else statement (with blocks) is supported. You can chain as many `nabhae` branches as you need, with an optional `natra` fallback at the end.
+```mu
 $ No alternative $
-yedi_muji(condition) {
+yedi(condition) {
     ...
 }
 
 $ With alternative $
-yedi_muji(condition) {
+yedi(condition) {
     ...
-} nabhae_muji(condition 2) {
+} nabhae(condition 2) {
     ...
-} nabhae_muji (condition 3) {
+} nabhae (condition 3) {
     ...
-} nabhae_chikne {
+} natra {
     ...
 }
 ```
@@ -79,30 +79,30 @@ yedi_muji(condition) {
 Comments should begin and end with `$` as shown above.
 
 ### Loops
-Muji lang supports two kinds of loops. The `jaba_samma_muji` loop (your traditional `while` loop), and `ghuma_muji` loop (also called the `for` loop traditionally).
+Mulang supports two kinds of loops. The `jaba_samma` loop (your traditional `while` loop), and `ghuma` loop (also called the `for` loop traditionally).
 
-```muji
-thoos_muji i = 0;
-thoos_muji sum = 0;
-jaba_samma_muji(i < 420) {
+```mu
+thoos i = 0;
+thoos sum = 0;
+jaba_samma(i < 100) {
     sum = sum + i;
     i = i + 1;
 }
 ```
 
-```muji
-thoos_muji i = 0;
-thoos_muji sum = 0;
-ghuma_muji(i = 0; i < 42; i = i + 1) {
+```mu
+thoos i = 0;
+thoos sum = 0;
+ghuma(i = 0; i < 42; i = i + 1) {
     sum = sum + i;
 }
 ```
 
 ### Hashmaps
-Muji also supports hashmaps. The keys of the hashmap should be strings. Value can be anything.
+Mulang also supports hashmaps. The keys of the hashmap should be strings. Value can be anything.
 
-```muji
-thoos_muji country_codes = { "NP": "+977", "IN": "+91" };
+```mu
+thoos country_codes = { "NP": "+977", "IN": "+91" };
 ```
 
 As with arrays, hashmaps can be indexed.
@@ -110,7 +110,7 @@ As with arrays, hashmaps can be indexed.
 ### Builtins
 We support a few builtin functions as of now:
 
-#### `lambai_muji`
+#### `lambai`
 Applicable to:
 - Arrays
 - Hashmaps
@@ -119,36 +119,36 @@ Applicable to:
 Returns the length (integer) in each case.
 
 Use case
-```muji
-thoos_muji x = [1,2,3];
-lambai_muji(x);
+```mu
+thoos x = [1,2,3];
+lambai(x);
 ```
 
-#### `khaad_muji`
+#### `khaad`
 Applicable to:
 - Arrays
 
-Python's `append` equivalent
-```muji
-thoos_muji myarr = [1,2,3];
-khaad_muji(myarr)
+Python's `append` equivalent. The first argument is the array, the second is the element to append.
+```mu
+thoos myarr = [1,2,3];
+khaad(myarr, 4);
 ```
 
-#### `udaa_muji`
+#### `udaa`
 The first argument should be an array, the second argument is index, and is optional.
 If supplied, removes the element at the given index, and returns the removed object. If not supplied, does the same thing to the last element of the array
 
-#### `bhan_muji`
+#### `bhan`
 Your `print()` equivalent.
-```muji
-bhan_muji("Hello, world!");
+```mu
+bhan("Hello, world!");
 ```
 
 #### `abs`
 Applicable to floats and intgers. Calcualtes the absolute value
-```muji
-thoos_muji x = -69;
-thoos_muji y = abs(x);
+```mu
+thoos x = -42;
+thoos y = abs(x);
 ```
 
 Please check out the `example-programs` to know more.
@@ -162,17 +162,17 @@ Next step:
 
 Build using
 
-```go
+```bash
 make
 ```
 
 Run the REPL
 
 ```bash
-./build/muji
+./build/mu
 ```
 Or, run the interpreter on a file
 
 ```bash
-./build/muji example.muji
+./build/mu example.mu
 ```

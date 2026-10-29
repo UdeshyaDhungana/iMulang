@@ -27,8 +27,8 @@ func startRepl() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("नमस्कार %s मुजी!\n", user.Username)
-	fmt.Println("यो \"मुजी\" भाषा हो। तल लेख् मुजी 👇")
+	fmt.Printf("नमस्कार %s जी!\n", user.Username)
+	fmt.Println("यो \"मुलाङ\" भाषा हो। तल लेख् 👇")
 	repl.Start(os.Stdin, os.Stdout)
 }
 

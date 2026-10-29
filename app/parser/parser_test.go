@@ -27,13 +27,13 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	t.FailNow()
 }
 
-/* THOOS MUJI */
+/* THOOS */
 
-func TestThoosMujiStatements(t *testing.T) {
+func TestThoosStatements(t *testing.T) {
 	input := `
-	thoos_muji x = 4;
-	thoos_muji y = x;
-	thoos_muji foobar = 234543;
+	thoos x = 4;
+	thoos y = x;
+	thoos foobar = 234543;
 	`
 
 	l := lexer.NewLexer(input)
@@ -58,21 +58,21 @@ func TestThoosMujiStatements(t *testing.T) {
 
 	for i, tt := range tests {
 		stmt := program.Statements[i]
-		if !testThoosMujiStatement(t, stmt, tt.expectedIdentifier) {
+		if !testThoosStatement(t, stmt, tt.expectedIdentifier) {
 			return
 		}
 	}
 }
 
-func testThoosMujiStatement(t *testing.T, s ast.Statement, name string) bool {
-	if s.TokenLiteral() != "thoos_muji" {
-		t.Errorf("s.TokenLiteral not 'thoos_muji'. got=%q", s.TokenLiteral())
+func testThoosStatement(t *testing.T, s ast.Statement, name string) bool {
+	if s.TokenLiteral() != "thoos" {
+		t.Errorf("s.TokenLiteral not 'thoos'. got=%q", s.TokenLiteral())
 		return false
 	}
 
-	thoosStmt, ok := s.(*ast.ThoosMujiStatement)
+	thoosStmt, ok := s.(*ast.ThoosStatement)
 	if !ok {
-		t.Errorf("s not *ast.ThoosMujiStatement. got=%T", s)
+		t.Errorf("s not *ast.ThoosStatement. got=%T", s)
 		return false
 	}
 
@@ -89,13 +89,13 @@ func testThoosMujiStatement(t *testing.T, s ast.Statement, name string) bool {
 	return true
 }
 
-/* PATHA MUJI */
-func TestPathaMujiStatements(t *testing.T) {
+/* PATHA */
+func TestPathaStatements(t *testing.T) {
 	input := `
-	patha_muji 2;
-	patha_muji a;
-	patha_muji x + y;
-	patha_muji "mero string";`
+	patha 2;
+	patha a;
+	patha x + y;
+	patha "mero string";`
 
 	l := lexer.NewLexer(input)
 	p := NewParser(l)
@@ -110,13 +110,13 @@ func TestPathaMujiStatements(t *testing.T) {
 	}
 
 	for _, stmt := range program.Statements {
-		ptmjStmt, ok := stmt.(*ast.PathaMujiStatement)
+		ptmjStmt, ok := stmt.(*ast.PathaStatement)
 		if !ok {
 			t.Errorf("stmt not *ast.returnState")
 			continue
 		}
-		if ptmjStmt.TokenLiteral() != "patha_muji" {
-			t.Errorf("ptmjStmt.TokenLiteral not 'patha_muji', got %q", program.TokenLiteral())
+		if ptmjStmt.TokenLiteral() != "patha" {
+			t.Errorf("ptmjStmt.TokenLiteral not 'patha', got %q", program.TokenLiteral())
 		}
 	}
 }
@@ -205,7 +205,7 @@ func TestFloatLiteralExpression(t *testing.T) {
 }
 
 func TestBooleanLiteralExpression(t *testing.T) {
-	input := "jhut_muji;"
+	input := "jhut;"
 
 	l := lexer.NewLexer(input)
 	p := NewParser(l)
@@ -227,7 +227,7 @@ func TestBooleanLiteralExpression(t *testing.T) {
 	if literal.Value != false {
 		t.Errorf("literal.Value is not %t. got=%t", false, literal.Value)
 	}
-	if literal.TokenLiteral() != "jhut_muji" {
+	if literal.TokenLiteral() != "jhut" {
 		t.Errorf("literal.TokenLiteral not %s. got=%s", "555", literal.TokenLiteral())
 	}
 }
@@ -240,8 +240,8 @@ func TestParsingPrefixExpressions(t *testing.T) {
 	}{
 		{"!5;", "!", int64(5)},
 		{"-15;", "-", int64(15)},
-		{"!jhut_muji;", "!", false},
-		{"!sacho_muji;", "!", true},
+		{"!jhut;", "!", false},
+		{"!sacho;", "!", true},
 	}
 
 	for _, tt := range prefixTests {
@@ -304,8 +304,8 @@ func testLiteral(t *testing.T, il ast.Expression, value any) bool {
 			return false
 		}
 
-		if b.Token.Type != token.JHUT_MUJI && b.Token.Type != token.SACHO_MUJI {
-			t.Errorf("boolean.TokenLiteral not %s or %s. got=%s", token.SACHO_MUJI, token.JHUT_MUJI, b.TokenLiteral())
+		if b.Token.Type != token.JHUT && b.Token.Type != token.SACHO {
+			t.Errorf("boolean.TokenLiteral not %s or %s. got=%s", token.SACHO, token.JHUT, b.TokenLiteral())
 			return false
 		}
 		return true
@@ -435,20 +435,20 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 			"((3 + (4 * 5)) == ((3 * 1) + (4 * 5)));",
 		},
 		{
-			"sacho_muji;",
-			"sacho_muji;",
+			"sacho;",
+			"sacho;",
 		},
 		{
-			"jhut_muji;",
-			"jhut_muji;",
+			"jhut;",
+			"jhut;",
 		},
 		{
-			"3 < 5 == jhut_muji;",
-			"((3 < 5) == jhut_muji);",
+			"3 < 5 == jhut;",
+			"((3 < 5) == jhut);",
 		},
 		{
-			"3 > 5 == sacho_muji;",
-			"((3 > 5) == sacho_muji);",
+			"3 > 5 == sacho;",
+			"((3 > 5) == sacho);",
 		},
 		{
 			"a + add(b * c) + d;",
@@ -479,31 +479,31 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 	}
 }
 
-func TestYediMujiStatementParsing(t *testing.T) {
+func TestYediStatementParsing(t *testing.T) {
 	tests := []struct {
 		program  string
 		expected string
 	}{
 		{
-			`yedi_muji (2 + 3 == 5) {
+			`yedi (2 + 3 == 5) {
 		1;
 		};`,
 			"",
 		},
 		{
-			`yedi_muji (sacho_muji) {
+			`yedi (sacho) {
 			23;
-			} nabhae_chikne {
+			} natra {
 			43;
 			};`,
 			"",
 		},
 		{
-			`yedi_muji(jhut_muji) {
+			`yedi(jhut) {
 				69;
-			} nabhae_muji (3 < 10) {
+			} nabhae (3 < 10) {
 			 	420;
-			} nabhae_chikne {
+			} natra {
 				1;
 			}`,
 			"",
@@ -526,21 +526,21 @@ func TestYediMujiStatementParsing(t *testing.T) {
 	}
 }
 
-func TestKaamGarMujiStatement(t *testing.T) {
+func TestKaamGarStatement(t *testing.T) {
 	tests := []struct {
 		literal        string
 		expectedParams []string
 	}{
 		{
-			"kaam_gar_muji(x, y) { patha_muji x + y; };",
+			"kaam_gar(x, y) { patha x + y; };",
 			[]string{"x", "y"},
 		},
 		{
-			"kaam_gar_muji() { patha_muji 3; };",
+			"kaam_gar() { patha 3; };",
 			[]string{},
 		},
 		{
-			"kaam_gar_muji(a, b, c) { patha_muji a + b + c; };",
+			"kaam_gar(a, b, c) { patha a + b + c; };",
 			[]string{"a", "b", "c"},
 		},
 	}
@@ -557,9 +557,9 @@ func TestKaamGarMujiStatement(t *testing.T) {
 		if !ok || stmt == nil {
 			t.Fatalf("program.Statements[0] is not *ast.ExpressionStatement")
 		}
-		f, ok := stmt.Expression.(*ast.KaamGarMujiExpression)
+		f, ok := stmt.Expression.(*ast.KaamGarExpression)
 		if !ok || f == nil {
-			t.Fatalf("stmt.Expression is not *ast.KaamGarMujiExpression")
+			t.Fatalf("stmt.Expression is not *ast.KaamGarExpression")
 		}
 
 		if len(f.Arguments) != len(tt.expectedParams) {
@@ -607,7 +607,7 @@ func TestArrayLength(t *testing.T) {
 			3,
 		},
 		{
-			"[\"udeshya\", \"dhungana\", kaam_gar_muji(x) { x * x }]",
+			"[\"udeshya\", \"dhungana\", kaam_gar(x) { x * x }]",
 			3,
 		},
 	}
@@ -641,12 +641,12 @@ func TestHashIndex(t *testing.T) {
 		index     int
 		expected  any
 	}{
-		{"thoos_muji arr = [1,2,3]; arr[0]",
+		{"thoos arr = [1,2,3]; arr[0]",
 			0,
 			1,
 		},
 		{
-			"thoos_muji m = [\"one\", jhut_muji, \"three\"]; m[1]",
+			"thoos m = [\"one\", jhut, \"three\"]; m[1]",
 			1,
 			false,
 		},
@@ -658,7 +658,7 @@ func TestHashIndex(t *testing.T) {
 		},
 		{
 			`
-			thoos_muji x = {"foo": 49, "baz": 3};
+			thoos x = {"foo": 49, "baz": 3};
 			x[0]
 			`,
 			0,
@@ -694,20 +694,20 @@ func TestHashIndex(t *testing.T) {
 	}
 }
 
-func TestJabasammaMujiExpressionParsing(t *testing.T) {
+func TestJabasammaExpressionParsing(t *testing.T) {
 	tests := []struct {
 		program  string
 		expected string
 	}{
 		{
-			`jaba_samma_muji (sacho_muji) {
+			`jaba_samma (sacho) {
 				1;
 			}
 			`,
 			"",
 		},
 		{
-			`jaba_samma_muji (jhut_muji) {
+			`jaba_samma (jhut) {
 				23;
 			}`,
 			"",
@@ -727,9 +727,9 @@ func TestJabasammaMujiExpressionParsing(t *testing.T) {
 		if !ok {
 			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
 		}
-		_, ok = es.Expression.(*ast.JabasammaMujiExpression)
+		_, ok = es.Expression.(*ast.JabasammaExpression)
 		if !ok {
-			t.Fatalf("expressiion not an ast.JabasammaMujiExpression. got=%T", es.Expression)
+			t.Fatalf("expressiion not an ast.JabasammaExpression. got=%T", es.Expression)
 		}
 	}
 }
@@ -785,18 +785,18 @@ func TestComments(t *testing.T) {
 	}{
 		{
 			`
-			thoos_muji x = 34;
-			$ bich ko line muji $
+			thoos x = 34;
+			$ bich ko line $
 			x
 			`,
 			"x",
 		},
 		{
 			`
-			thoos_muji x = 34;
-			$ bich ko line muji $
+			thoos x = 34;
+			$ bich ko line $
 			x
-			$ last ko line muji $
+			$ last ko line $
 			`,
 			"x",
 		},
@@ -829,11 +829,11 @@ func TestCustom(t *testing.T) {
 		{
 			`
 			$ recursion wala program $
-			thoos_muji recursion = kaam_gar_muji(x) {
-    			yedi_muji (x == 0) {
-        			patha_muji 1;
-    			} nabhae_chikne {
-        			patha_muji x * recursion(x - 1);
+			thoos recursion = kaam_gar(x) {
+    			yedi (x == 0) {
+        			patha 1;
+    			} natra {
+        			patha x * recursion(x - 1);
     			}
 			};
 
@@ -841,7 +841,7 @@ func TestCustom(t *testing.T) {
 			recursion(4);
 
 			$ yo incomplete comment
-			bhan_muji("Hello world")
+			bhan("Hello world")
 			`,
 		},
 	}

@@ -9,8 +9,8 @@ import (
 func TestString(t *testing.T) {
 	program := &Program{
 		Statements: []Statement{
-			&ThoosMujiStatement{
-				Token: token.Token{Type: token.THOOS_MUJI, Literal: "thoos_muji"},
+			&ThoosStatement{
+				Token: token.Token{Type: token.THOOS, Literal: "thoos"},
 				Name: &Identifier{
 					Token: token.Token{Type: token.IDFIER, Literal: "myVar"},
 					Value: "myVar",
@@ -23,7 +23,7 @@ func TestString(t *testing.T) {
 		},
 	}
 
-	if program.String() != "thoos_muji myVar = anotherVar;" {
+	if program.String() != "thoos myVar = anotherVar;" {
 		t.Errorf("program.String() wrong. got=%q", program.String())
 	}
 }

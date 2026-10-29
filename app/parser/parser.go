@@ -64,15 +64,15 @@ func NewParser(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.FLOAT, p.parseFloatLiteral)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
-	p.registerPrefix(token.JHUT_MUJI, p.parseBoolean)
-	p.registerPrefix(token.SACHO_MUJI, p.parseBoolean)
-	p.registerPrefix(token.KAAM_GAR_MUJI, p.parseKaamGarMuji)
+	p.registerPrefix(token.JHUT, p.parseBoolean)
+	p.registerPrefix(token.SACHO, p.parseBoolean)
+	p.registerPrefix(token.KAAM_GAR, p.parseKaamGar)
 	p.registerPrefix(token.LPAREN, p.parseLeftParenthesis)
-	p.registerPrefix(token.YEDI_MUJI, p.parseYediMujiExpression)
+	p.registerPrefix(token.YEDI, p.parseYediExpression)
 	p.registerPrefix(token.STRING, p.parseStringExpression)
 	p.registerPrefix(token.LBRACKET, p.parseArrayExpression)
-	p.registerPrefix(token.JABA_SAMMA_MUJI, p.parseJabasammaMujiExpression)
-	p.registerPrefix(token.GHUMA_MUJI, p.parseGhumaMujiExpression)
+	p.registerPrefix(token.JABA_SAMMA, p.parseJabasammaExpression)
+	p.registerPrefix(token.GHUMA, p.parseGhumaExpression)
 	p.registerPrefix(token.LBRACE, p.parseHashExpression)
 
 	// infix functions for operators
@@ -191,20 +191,20 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
-	case token.THOOS_MUJI:
-		return p.parseThoosMujiStatement()
-	case token.PATHA_MUJI:
-		return p.parsePathaMujiStatement()
+	case token.THOOS:
+		return p.parseThoosStatement()
+	case token.PATHA:
+		return p.parsePathaStatement()
 	default:
 		return p.parseExpressionStatement()
 	}
 }
 
-func (p *Parser) parseThoosMujiStatement() *ast.ThoosMujiStatement {
-	stmt := &ast.ThoosMujiStatement{Token: p.curToken}
+func (p *Parser) parseThoosStatement() *ast.ThoosStatement {
+	stmt := &ast.ThoosStatement{Token: p.curToken}
 
 	if !p.expectPeek(token.IDFIER) {
-		p.errors = append(p.errors, "expected identifier after thoos_muji")
+		p.errors = append(p.errors, "expected identifier after thoos")
 		return nil
 	}
 
@@ -228,8 +228,8 @@ func (p *Parser) parseThoosMujiStatement() *ast.ThoosMujiStatement {
 	return stmt
 }
 
-func (p *Parser) parsePathaMujiStatement() *ast.PathaMujiStatement {
-	stmt := &ast.PathaMujiStatement{Token: p.curToken}
+func (p *Parser) parsePathaStatement() *ast.PathaStatement {
+	stmt := &ast.PathaStatement{Token: p.curToken}
 
 	p.nextToken()
 	stmt.Value = p.parseExpressionUsingPratt(LOWEST)
@@ -244,15 +244,15 @@ func (p *Parser) parsePathaMujiStatement() *ast.PathaMujiStatement {
 	return stmt
 }
 
-func (p *Parser) parseYediMujiExpression() ast.Expression {
-	stmt := &ast.YediMujiExpression{Token: p.curToken}
-	if !p.curTokenIs(token.YEDI_MUJI) {
-		p.errors = append(p.errors, "expected yedi_muji at the start of yedi_muji expression")
+func (p *Parser) parseYediExpression() ast.Expression {
+	stmt := &ast.YediExpression{Token: p.curToken}
+	if !p.curTokenIs(token.YEDI) {
+		p.errors = append(p.errors, "expected yedi at the start of yedi expression")
 		return nil
 	}
 	p.nextToken()
 	if !p.curTokenIs(token.LPAREN) {
-		p.errors = append(p.errors, "expected ( after yedi_muji")
+		p.errors = append(p.errors, "expected ( after yedi")
 		return nil
 	}
 	// evaluate expression
@@ -268,19 +268,19 @@ func (p *Parser) parseYediMujiExpression() ast.Expression {
 	stmt.Consequent = p.parseBlockStatement()
 
 	// if statement with no consequences
-	if !p.peekTokenIs(token.NABHAE_CHIKNE) && !p.peekTokenIs(token.NABHAE_MUJI) {
+	if !p.peekTokenIs(token.NATRA) && !p.peekTokenIs(token.NABHAE) {
 		return stmt
 	}
 
 	// with alternatives
-	for p.peekTokenIs(token.NABHAE_MUJI) {
+	for p.peekTokenIs(token.NABHAE) {
 		p.nextToken()
-		exp := p.parseNabhaeMujiExpression()
+		exp := p.parseNabhaeExpression()
 		stmt.Alternatives = append(stmt.Alternatives, exp)
 	}
 
 	// with fallback
-	if !p.expectPeek(token.NABHAE_CHIKNE) {
+	if !p.expectPeek(token.NATRA) {
 		return nil
 	}
 	p.nextToken()
@@ -289,10 +289,10 @@ func (p *Parser) parseYediMujiExpression() ast.Expression {
 	return stmt
 }
 
-func (p *Parser) parseNabhaeMujiExpression() *ast.NabhaeMujiExpression {
-	res := &ast.NabhaeMujiExpression{Token: p.curToken}
-	if !p.curTokenIs(token.NABHAE_MUJI) {
-		p.errors = append(p.errors, "yedi muji alternative expression must begin with `nabhae_muji`")
+func (p *Parser) parseNabhaeExpression() *ast.NabhaeExpression {
+	res := &ast.NabhaeExpression{Token: p.curToken}
+	if !p.curTokenIs(token.NABHAE) {
+		p.errors = append(p.errors, "yedi alternative expression must begin with `nabhae`")
 	}
 	if !p.expectPeek(token.LPAREN) {
 		return nil
@@ -312,15 +312,15 @@ func (p *Parser) parseNabhaeMujiExpression() *ast.NabhaeMujiExpression {
 	return res
 }
 
-func (p *Parser) parseJabasammaMujiExpression() ast.Expression {
-	stmt := &ast.JabasammaMujiExpression{Token: p.curToken}
-	if !p.curTokenIs(token.JABA_SAMMA_MUJI) {
-		p.errors = append(p.errors, "jaba_samma_muji expected")
+func (p *Parser) parseJabasammaExpression() ast.Expression {
+	stmt := &ast.JabasammaExpression{Token: p.curToken}
+	if !p.curTokenIs(token.JABA_SAMMA) {
+		p.errors = append(p.errors, "jaba_samma expected")
 		return nil
 	}
 	p.nextToken()
 	if !p.curTokenIs(token.LPAREN) {
-		p.errors = append(p.errors, "expected ( after jaba_samma_muji")
+		p.errors = append(p.errors, "expected ( after jaba_samma")
 		return nil
 	}
 	// parse condition
@@ -336,15 +336,15 @@ func (p *Parser) parseJabasammaMujiExpression() ast.Expression {
 	return stmt
 }
 
-func (p *Parser) parseGhumaMujiExpression() ast.Expression {
-	stmt := &ast.GhumaMujiExpression{Token: p.curToken}
-	if !p.curTokenIs(token.GHUMA_MUJI) {
-		p.errors = append(p.errors, "expected: ghuma_muji")
+func (p *Parser) parseGhumaExpression() ast.Expression {
+	stmt := &ast.GhumaExpression{Token: p.curToken}
+	if !p.curTokenIs(token.GHUMA) {
+		p.errors = append(p.errors, "expected: ghuma")
 		return nil
 	}
 	p.nextToken()
 	if !p.curTokenIs(token.LPAREN) {
-		p.errors = append(p.errors, "expected '(' after ghuma_muji")
+		p.errors = append(p.errors, "expected '(' after ghuma")
 		return nil
 	}
 	p.nextToken()
@@ -362,11 +362,11 @@ func (p *Parser) parseGhumaMujiExpression() ast.Expression {
 	p.nextToken()
 	stmt.Update = p.parseExpressionUsingPratt(LOWEST)
 	if !p.expectPeek(token.RPAREN) {
-		p.errors = append(p.errors, "expected ')' after update in ghuma_muji")
+		p.errors = append(p.errors, "expected ')' after update in ghuma")
 		return nil
 	}
 	if !p.expectPeek(token.LBRACE) {
-		p.errors = append(p.errors, "expected { for ghuma_muji body")
+		p.errors = append(p.errors, "expected { for ghuma body")
 		return nil
 	}
 	stmt.Body = p.parseBlockStatement()
@@ -410,9 +410,9 @@ func (p *Parser) parseIdentifier() ast.Expression {
 
 func (p *Parser) parseBoolean() ast.Expression {
 	switch p.curToken.Type {
-	case token.SACHO_MUJI:
+	case token.SACHO:
 		return &ast.Boolean{Token: p.curToken, Value: true}
-	case token.JHUT_MUJI:
+	case token.JHUT:
 		return &ast.Boolean{Token: p.curToken, Value: false}
 	default:
 		panic(fmt.Sprintf("not a boolean: %s\n", p.curToken.Literal))
@@ -506,15 +506,15 @@ func (p *Parser) parseArguments() []ast.Expression {
 	return args
 }
 
-func (p *Parser) parseKaamGarMuji() ast.Expression {
-	result := ast.KaamGarMujiExpression{Token: p.curToken}
-	if !p.curTokenIs(token.KAAM_GAR_MUJI) {
-		p.errors = append(p.errors, "expected: kaam_gar_muji")
+func (p *Parser) parseKaamGar() ast.Expression {
+	result := ast.KaamGarExpression{Token: p.curToken}
+	if !p.curTokenIs(token.KAAM_GAR) {
+		p.errors = append(p.errors, "expected: kaam_gar")
 		return nil
 	}
 	p.nextToken()
 	if !p.curTokenIs(token.LPAREN) {
-		p.errors = append(p.errors, "expected ( after kaam_gar_muji")
+		p.errors = append(p.errors, "expected ( after kaam_gar")
 		return nil
 	}
 	p.nextToken()

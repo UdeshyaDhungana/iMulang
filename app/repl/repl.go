@@ -12,7 +12,7 @@ import (
 	"github.com/udeshyadhungana/interprerer/app/utils"
 )
 
-const PROMPT = "(lekh_muji) >> "
+const PROMPT = "(lekh) >> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
