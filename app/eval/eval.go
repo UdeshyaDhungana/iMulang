@@ -14,12 +14,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalProgram(node, env)
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
-	case *ast.YediMujiExpression:
-		return evalYediMujiStatement(node, env)
-	case *ast.PathaMujiStatement:
-		return evalPathaMujiStatement(node.Value, env)
-	case *ast.ThoosMujiStatement:
-		return evalThoosMujiStatement(node.Name, node.Value, env)
+	case *ast.YediExpression:
+		return evalYediStatement(node, env)
+	case *ast.PathaStatement:
+		return evalPathaStatement(node.Value, env)
+	case *ast.ThoosStatement:
+		return evalThoosStatement(node.Name, node.Value, env)
 	case *ast.BlockStatement:
 		return evalStatements(node.Statements, env)
 	case *ast.IntegerLiteral:
@@ -32,10 +32,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalArrayExpression(node, env)
 	case *ast.IndexExpression:
 		return evalIndexExpression(node, env)
-	case *ast.JabasammaMujiExpression:
-		return evalJabasammaMujiExpression(node.Condition, node.Consequent, env)
-	case *ast.GhumaMujiExpression:
-		return evalGhumaMujiExpression(node.Initialization, node.Condition, node.Update, node.Body, env)
+	case *ast.JabasammaExpression:
+		return evalJabasammaExpression(node.Condition, node.Consequent, env)
+	case *ast.GhumaExpression:
+		return evalGhumaExpression(node.Initialization, node.Condition, node.Update, node.Body, env)
 	case *ast.HashExpression:
 		return evalHashExpression(node, env)
 	case *ast.Boolean:
@@ -45,8 +45,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return object.FALSE
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
-	case *ast.KaamGarMujiExpression:
-		return evalKaamGarMujiExpression(node, env)
+	case *ast.KaamGarExpression:
+		return evalKaamGarExpression(node, env)
 	case *ast.CallExpression:
 		return evalCallExpression(node, env)
 	case *ast.PrefixExpression:
@@ -89,7 +89,7 @@ func evalStatements(stmts []ast.Statement, env *object.Environment) object.Objec
 
 		if result != nil {
 			rt := result.Type()
-			if rt == object.PATHA_MUJI_OBJ || rt == object.GALAT_MUJI_OBJ {
+			if rt == object.PATHA_OBJ || rt == object.GALAT_OBJ {
 				return result
 			}
 		}
@@ -295,14 +295,14 @@ func evalInfixExpression(left object.Object, operator string, right object.Objec
 		return evalGT(left, right)
 	case ">=":
 		isGT := evalGT(left, right)
-		if isGT.Type() == object.GALAT_MUJI_OBJ {
+		if isGT.Type() == object.GALAT_OBJ {
 			return isGT
 		}
 		if isGT == object.TRUE {
 			return isGT
 		}
 		isEQ := evalEQ(left, right)
-		if isEQ.Type() == object.GALAT_MUJI_OBJ {
+		if isEQ.Type() == object.GALAT_OBJ {
 			return isEQ
 		}
 		if isEQ == object.TRUE {
@@ -313,14 +313,14 @@ func evalInfixExpression(left object.Object, operator string, right object.Objec
 		return evalLT(left, right)
 	case "<=":
 		isLT := evalLT(left, right)
-		if isLT.Type() == object.GALAT_MUJI_OBJ {
+		if isLT.Type() == object.GALAT_OBJ {
 			return isLT
 		}
 		if isLT == object.TRUE {
 			return isLT
 		}
 		isEQ := evalEQ(left, right)
-		if isEQ.Type() == object.GALAT_MUJI_OBJ {
+		if isEQ.Type() == object.GALAT_OBJ {
 			return isEQ
 		}
 		if isEQ == object.TRUE {
@@ -339,34 +339,34 @@ func areBothNumbers(left object.Object, right object.Object) bool {
 
 /* End Infix */
 
-func evalYediMujiStatement(yediMujiExpr *ast.YediMujiExpression, env *object.Environment) object.Object {
-	if isConditionTrue(yediMujiExpr.Condition, env) {
-		return evalStatements(yediMujiExpr.Consequent.Statements, env)
+func evalYediStatement(yediExpr *ast.YediExpression, env *object.Environment) object.Object {
+	if isConditionTrue(yediExpr.Condition, env) {
+		return evalStatements(yediExpr.Consequent.Statements, env)
 	}
 
 	// Evaluate alternatives now
-	if yediMujiExpr.Alternatives != nil {
-		for _, alt := range yediMujiExpr.Alternatives {
+	if yediExpr.Alternatives != nil {
+		for _, alt := range yediExpr.Alternatives {
 			if isConditionTrue(alt.Condition, env) {
 				return evalStatements(alt.Consequent.Statements, env)
 			}
 		}
 	}
 
-	if yediMujiExpr.Fallback != nil {
+	if yediExpr.Fallback != nil {
 		blockEnv := object.NewEnclosedEnvironment(env)
-		return evalStatements(yediMujiExpr.Fallback.Statements, blockEnv)
+		return evalStatements(yediExpr.Fallback.Statements, blockEnv)
 	}
 	return object.NULL
 }
 
-func evalJabasammaMujiExpression(condition ast.Node, consequent ast.Node, env *object.Environment) object.Object {
+func evalJabasammaExpression(condition ast.Node, consequent ast.Node, env *object.Environment) object.Object {
 	var result object.Object
 	newEnv := object.NewEnclosedEnvironment(env)
 	for isConditionTrue(condition, newEnv) {
 		body, ok := consequent.(*ast.BlockStatement)
 		if !ok {
-			return newError("body of jaba samma muji must be a block statement")
+			return newError("body of jaba samma must be a block statement")
 		}
 		newEnv := object.NewEnclosedEnvironment(newEnv)
 		result = Eval(body, newEnv)
@@ -374,20 +374,20 @@ func evalJabasammaMujiExpression(condition ast.Node, consequent ast.Node, env *o
 	return result
 }
 
-func evalGhumaMujiExpression(initialization ast.Node, condition ast.Node, update ast.Node, body ast.Node, env *object.Environment) object.Object {
+func evalGhumaExpression(initialization ast.Node, condition ast.Node, update ast.Node, body ast.Node, env *object.Environment) object.Object {
 	newEnv := object.NewEnclosedEnvironment(env)
 	init := Eval(initialization, newEnv)
-	if init.Type() == object.GALAT_MUJI_OBJ {
+	if init.Type() == object.GALAT_OBJ {
 		return init
 	}
 	for isConditionTrue(condition, newEnv) {
 		// check condition
 		result := Eval(body, newEnv)
-		if result.Type() == object.GALAT_MUJI_OBJ || result.Type() == object.PATHA_MUJI_OBJ {
+		if result.Type() == object.GALAT_OBJ || result.Type() == object.PATHA_OBJ {
 			return result
 		}
 		up := Eval(update, newEnv)
-		if up.Type() == object.GALAT_MUJI_OBJ {
+		if up.Type() == object.GALAT_OBJ {
 			return result
 		}
 	}
@@ -407,7 +407,7 @@ func isConditionTrue(condition ast.Node, env *object.Environment) bool {
 	return utils.IsTruthy(cc)
 }
 
-func evalPathaMujiStatement(value ast.Node, env *object.Environment) object.Object {
+func evalPathaStatement(value ast.Node, env *object.Environment) object.Object {
 	val := Eval(value, env)
 	if isError(val) {
 		return val
@@ -427,10 +427,10 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 	return newError("identifier not found: %s", node.Value)
 }
 
-func evalThoosMujiStatement(name *ast.Identifier, value ast.Expression, env *object.Environment) object.Object {
+func evalThoosStatement(name *ast.Identifier, value ast.Expression, env *object.Environment) object.Object {
 	if name != nil {
 		v := Eval(value, env)
-		if v.Type() == object.GALAT_MUJI_OBJ {
+		if v.Type() == object.GALAT_OBJ {
 			return v
 		}
 		return env.Set(name.Value, v)
@@ -443,7 +443,7 @@ func evalAssignment(name ast.Expression, value ast.Expression, env *object.Envir
 		return newError("left operand of assignment operator is nil")
 	}
 	v := Eval(value, env)
-	if v.Type() == object.GALAT_MUJI_OBJ {
+	if v.Type() == object.GALAT_OBJ {
 		return v
 	}
 	switch n := name.(type) {
@@ -490,7 +490,7 @@ func evalAssignmentForIndexExpression(ie *ast.IndexExpression, value object.Obje
 	}
 }
 
-func evalKaamGarMujiExpression(node *ast.KaamGarMujiExpression, env *object.Environment) object.Object {
+func evalKaamGarExpression(node *ast.KaamGarExpression, env *object.Environment) object.Object {
 	var result object.KaamGar
 	result.Body = node.Body
 	result.Env = env
@@ -511,10 +511,10 @@ func evalCallExpression(name *ast.CallExpression, env *object.Environment) objec
 
 	fn := evalIdentifier(&ast.Identifier{Value: name.Function.TokenLiteral()}, env)
 	switch fn.Type() {
-	case object.GALAT_MUJI_OBJ:
+	case object.GALAT_OBJ:
 		// might be a function expression itself
-		if kgr, ok := name.Function.(*ast.KaamGarMujiExpression); ok {
-			fn = evalKaamGarMujiExpression(kgr, env)
+		if kgr, ok := name.Function.(*ast.KaamGarExpression); ok {
+			fn = evalKaamGarExpression(kgr, env)
 		} else {
 			return newError("Cannot apply: %s", name.Function.String())
 		}
@@ -557,7 +557,7 @@ func evalArrayExpression(a *ast.ArrayExpression, env *object.Environment) object
 	var result object.Array
 	for i := range a.Elements {
 		evaluated := Eval(a.Elements[i], env)
-		if evaluated.Type() == object.GALAT_MUJI_OBJ {
+		if evaluated.Type() == object.GALAT_OBJ {
 			return evaluated
 		}
 		result.Arr = append(result.Arr, evaluated)
@@ -567,7 +567,7 @@ func evalArrayExpression(a *ast.ArrayExpression, env *object.Environment) object
 
 func evalIndexExpression(a *ast.IndexExpression, env *object.Environment) object.Object {
 	idxEvaluated := Eval(a.Index, env)
-	if idxEvaluated.Type() == object.GALAT_MUJI_OBJ {
+	if idxEvaluated.Type() == object.GALAT_OBJ {
 		return idxEvaluated
 	}
 	operand := Eval(a.Operand, env)
@@ -586,7 +586,7 @@ func evalIndexExpression(a *ast.IndexExpression, env *object.Environment) object
 		hmap := operand.(*object.HashMap)
 		idx := idxEvaluated.(*object.String)
 		return hmap.Pairs[idx.Value]
-	case object.GALAT_MUJI_OBJ:
+	case object.GALAT_OBJ:
 		return operand
 	default:
 		return newError("cannot index %s", operand.Type())
@@ -624,7 +624,7 @@ func newError(format string, a ...any) *object.Error {
 
 func isError(obj object.Object) bool {
 	if obj != nil {
-		return obj.Type() == object.GALAT_MUJI_OBJ
+		return obj.Type() == object.GALAT_OBJ
 	}
 	return false
 }

@@ -120,8 +120,8 @@ func TestEvalBoolStatement(t *testing.T) {
 		input    string
 		expected bool
 	}{
-		{"sacho_muji;", true},
-		{"jhut_muji;", false},
+		{"sacho;", true},
+		{"jhut;", false},
 		{"1 < 2;", true},
 		{"1 > 2;", false},
 		{"1 < 1;", false},
@@ -130,15 +130,15 @@ func TestEvalBoolStatement(t *testing.T) {
 		{"1 != 1;", false},
 		{"1 == 2;", false},
 		{"1 != 2;", true},
-		{"sacho_muji == sacho_muji;", true},
-		{"jhut_muji == jhut_muji;", true},
-		{"sacho_muji == jhut_muji;", false},
-		{"sacho_muji != jhut_muji;", true},
-		{"jhut_muji != sacho_muji;", true},
-		{"(1 < 2) == sacho_muji;", true},
-		{"(1 < 2) == jhut_muji;", false},
-		{"(1 > 2) == sacho_muji;", false},
-		{"(1 > 2) == jhut_muji;", true},
+		{"sacho == sacho;", true},
+		{"jhut == jhut;", true},
+		{"sacho == jhut;", false},
+		{"sacho != jhut;", true},
+		{"jhut != sacho;", true},
+		{"(1 < 2) == sacho;", true},
+		{"(1 < 2) == jhut;", false},
+		{"(1 > 2) == sacho;", false},
+		{"(1 > 2) == jhut;", true},
 	}
 
 	for _, tt := range tests {
@@ -165,11 +165,11 @@ func TestBangOperator(t *testing.T) {
 		input    string
 		expected bool
 	}{
-		{"!sacho_muji;", false},
-		{"!jhut_muji;", true},
+		{"!sacho;", false},
+		{"!jhut;", true},
 		{"!5;", false},
-		{"!!sacho_muji;", true},
-		{"!!jhut_muji;", false},
+		{"!!sacho;", true},
+		{"!!jhut;", false},
 		{"!!5;", true},
 	}
 
@@ -179,22 +179,22 @@ func TestBangOperator(t *testing.T) {
 	}
 }
 
-func TestYediMujiExpressions(t *testing.T) {
+func TestYediExpressions(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected interface{}
 	}{
-		{"yedi_muji(sacho_muji) { 10; }", 10},
-		{"yedi_muji (jhut_muji) { 10; }", nil},
-		{"yedi_muji (1) { 10; }", 10},
-		{"yedi_muji (1 < 2) { 10; }", 10},
-		{"yedi_muji (1 > 2) { 10; }", nil},
-		{"yedi_muji (1 > 2) { 10; } nabhae_chikne { 20; }", 20},
-		{"yedi_muji (1 < 2) { 10; } nabhae_chikne { 20; }", 10},
-		{"yedi_muji (100 < 2) { 10; } nabhae_muji (2 > 1) { 20; } nabhae_chikne { 30; }", 20},
-		{"yedi_muji (100 > 2) { 10; } nabhae_muji (2 > 1) { 20; } nabhae_chikne { 30; }", 10},
-		{"yedi_muji (100 < 2) { 10; } nabhae_muji (2 < 1) { 20; } nabhae_chikne { 30; }", 30},
-		{"yedi_muji (100 < 2) { 10; } nabhae_muji (2 < 1) { 20; } nabhae_muji (3 > 1) { 30; } nabhae_chikne { 40 ;}", 30},
+		{"yedi(sacho) { 10; }", 10},
+		{"yedi (jhut) { 10; }", nil},
+		{"yedi (1) { 10; }", 10},
+		{"yedi (1 < 2) { 10; }", 10},
+		{"yedi (1 > 2) { 10; }", nil},
+		{"yedi (1 > 2) { 10; } natra { 20; }", 20},
+		{"yedi (1 < 2) { 10; } natra { 20; }", 10},
+		{"yedi (100 < 2) { 10; } nabhae (2 > 1) { 20; } natra { 30; }", 20},
+		{"yedi (100 > 2) { 10; } nabhae (2 > 1) { 20; } natra { 30; }", 10},
+		{"yedi (100 < 2) { 10; } nabhae (2 < 1) { 20; } natra { 30; }", 30},
+		{"yedi (100 < 2) { 10; } nabhae (2 < 1) { 20; } nabhae (3 > 1) { 30; } natra { 40 ;}", 30},
 	}
 
 	for _, tt := range tests {
@@ -217,21 +217,21 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 	return false
 }
 
-func TestPathaMujiStatements(t *testing.T) {
+func TestPathaStatements(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected any
 	}{
-		{"patha_muji 10;", 10},
-		{"patha_muji 233;", 233},
-		{"yedi_muji(10 > 1) { patha_muji 1; } nabhae_chikne { patha_muji 0; }", 1},
-		{"yedi_muji(10 < 1) { patha_muji 1; } nabhae_chikne { patha_muji 0; }", 0},
+		{"patha 10;", 10},
+		{"patha 233;", 233},
+		{"yedi(10 > 1) { patha 1; } natra { patha 0; }", 1},
+		{"yedi(10 < 1) { patha 1; } natra { patha 0; }", 0},
 		{`
-		yedi_muji (10 > 1) {
-			yedi_muji (10 > 1) {
-				patha_muji 1;
+		yedi (10 > 1) {
+			yedi (10 > 1) {
+				patha 1;
 			}
-			patha_muji 2;
+			patha 2;
 		}
 		`, 1},
 	}
@@ -254,35 +254,35 @@ func TestErrorHandling(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			"5 + sacho_muji;",
+			"5 + sacho;",
 			"unsupported operation INTEGER + BOOLEAN",
 		},
 		{
-			"5 + jhut_muji; 5;",
+			"5 + jhut; 5;",
 			"unsupported operation INTEGER + BOOLEAN",
 		},
 		{
-			"-sacho_muji;",
+			"-sacho;",
 			"unknown operator: -BOOLEAN",
 		},
 		{
-			"sacho_muji + jhut_muji;",
+			"sacho + jhut;",
 			"unsupported operation BOOLEAN + BOOLEAN",
 		},
 		{
-			"5; sacho_muji + jhut_muji; 5;",
+			"5; sacho + jhut; 5;",
 			"unsupported operation BOOLEAN + BOOLEAN",
 		},
 		{
-			"yedi_muji (10 > 1) { sacho_muji + jhut_muji; }",
+			"yedi (10 > 1) { sacho + jhut; }",
 			"unsupported operation BOOLEAN + BOOLEAN",
 		},
 		{
-			`yedi_muji (10 > 1) {
-				yedi_muji (20 > 1) {
-					patha_muji sacho_muji + jhut_muji;
+			`yedi (10 > 1) {
+				yedi (20 > 1) {
+					patha sacho + jhut;
 				}
-				patha_muji 1;
+				patha 1;
 			}`,
 			"unsupported operation BOOLEAN + BOOLEAN",
 		},
@@ -308,16 +308,16 @@ func TestErrorHandling(t *testing.T) {
 	}
 }
 
-/* TestThoosMuji */
-func TestThoosMujiStatements(t *testing.T) {
+/* TestThoos */
+func TestThoosStatements(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected int64
 	}{
-		{"thoos_muji a = 5; a;", 5},
-		{"thoos_muji a = 5 * 5; a;", 25},
-		{"thoos_muji a = 5; thoos_muji b = a; b;", 5},
-		{"thoos_muji a = 5; thoos_muji b = a; thoos_muji c = a + b + 5; c;", 15},
+		{"thoos a = 5; a;", 5},
+		{"thoos a = 5 * 5; a;", 25},
+		{"thoos a = 5; thoos b = a; b;", 5},
+		{"thoos a = 5; thoos b = a; thoos c = a + b + 5; c;", 15},
 	}
 
 	for _, tt := range tests {
@@ -330,12 +330,12 @@ func TestFunctionApplication(t *testing.T) {
 		input    string
 		expected int64
 	}{
-		{"thoos_muji identity = kaam_gar_muji(x) { x; }; identity(5);", 5},
-		{"thoos_muji identity = kaam_gar_muji(x) { patha_muji x; }; identity(5);", 5},
-		{"thoos_muji double = kaam_gar_muji(x) { x * 2; }; double(5);", 10},
-		{"thoos_muji add = kaam_gar_muji(x, y) { x + y; }; add(5, 5);", 10},
-		{"thoos_muji add = kaam_gar_muji(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
-		{"kaam_gar_muji(x) { x; }(5)", 5},
+		{"thoos identity = kaam_gar(x) { x; }; identity(5);", 5},
+		{"thoos identity = kaam_gar(x) { patha x; }; identity(5);", 5},
+		{"thoos double = kaam_gar(x) { x * 2; }; double(5);", 10},
+		{"thoos add = kaam_gar(x, y) { x + y; }; add(5, 5);", 10},
+		{"thoos add = kaam_gar(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"kaam_gar(x) { x; }(5)", 5},
 	}
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
@@ -348,11 +348,11 @@ func TestRecursion(t *testing.T) {
 		expected int64
 	}{
 		{`
-		thoos_muji recursion = kaam_gar_muji(x) {
-			yedi_muji (x == 0) {
-				patha_muji 1;
-			} nabhae_chikne {
-			 	patha_muji x * recursion(x - 1);
+		thoos recursion = kaam_gar(x) {
+			yedi (x == 0) {
+				patha 1;
+			} natra {
+			 	patha x * recursion(x - 1);
 			}
 		};
 		recursion(4);
@@ -371,43 +371,43 @@ func TestBuiltinFunctions(t *testing.T) {
 		input    string
 		expected interface{}
 	}{
-		{`lambai_muji("")`, 0},
-		{`lambai_muji("four")`, 4},
-		{`lambai_muji("hello world")`, 11},
-		{`lambai_muji(1)`, "argument to `lambai_muji` not supported, got INTEGER"},
-		{`lambai_muji("one", "two")`, "wrong number of arguments. got=2, want=1"},
-		{`lambai_muji([1,2,4])`, 3},
-		{`lambai_muji({"foo": 2, "bar": 45})`, 2},
+		{`lambai("")`, 0},
+		{`lambai("four")`, 4},
+		{`lambai("hello world")`, 11},
+		{`lambai(1)`, "argument to `lambai` not supported, got INTEGER"},
+		{`lambai("one", "two")`, "wrong number of arguments. got=2, want=1"},
+		{`lambai([1,2,4])`, 3},
+		{`lambai({"foo": 2, "bar": 45})`, 2},
 		{
 			`
-				thoos_muji x = [1,2,3,4];
-				khaad_muji(x, 5);
-				lambai_muji(x)
+				thoos x = [1,2,3,4];
+				khaad(x, 5);
+				lambai(x)
 				x[4]
 			`,
 			5,
 		},
 		{
 			`
-				thoos_muji x = [1,2,3,4];
-				thoos_muji z = udaa_muji(x, 0);
+				thoos x = [1,2,3,4];
+				thoos z = udaa(x, 0);
 				z
 			`,
 			1,
 		},
 		{
 			`
-				thoos_muji x = [1,2,3,4];
-				thoos_muji z = udaa_muji(x);
+				thoos x = [1,2,3,4];
+				thoos z = udaa(x);
 				z
 			`,
 			4,
 		},
 		{
 			`
-				thoos_muji x = [1,2,3,4];
-				thoos_muji z = udaa_muji(x);
-				lambai_muji(x)
+				thoos x = [1,2,3,4];
+				thoos z = udaa(x);
+				lambai(x)
 			`,
 			3,
 		},
@@ -438,24 +438,24 @@ func TestIndexEval(t *testing.T) {
 		expected any
 	}{
 		{
-			`thoos_muji x = [1,2,3];
+			`thoos x = [1,2,3];
 			x[0]`,
 			1,
 		},
 		{
-			`thoos_muji y = [sacho_muji, jhut_muji, jhut_muji];
+			`thoos y = [sacho, jhut, jhut];
 			y[2]`,
 			false,
 		},
 		{
-			`thoos_muji y = ["Udeshya", "Dhungana"];
+			`thoos y = ["Udeshya", "Dhungana"];
 			y[0]`,
 			"Udeshya",
 		},
 		{
 			`
-			thoos_muji y = "foo";
-			thoos_muji x = {y: 23, "foo": "bar"};
+			thoos y = "foo";
+			thoos x = {y: 23, "foo": "bar"};
 			x[y]
 			`,
 			"bar",
@@ -476,34 +476,34 @@ func TestIndexEval(t *testing.T) {
 }
 
 // too lazy to write different test cases, i combined them
-func TestJabasammaMujiAndAssignment(t *testing.T) {
+func TestJabasammaAndAssignment(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected int64
 	}{
 		{
 			`
-			thoos_muji i = 0;
+			thoos i = 0;
 			i = 3;
 			`,
 			3,
 		},
 		{
 			`
-			thoos_muji sum = kaam_gar_muji(x) {
-				patha_muji x * 2;
+			thoos sum = kaam_gar(x) {
+				patha x * 2;
 			};
 
-			thoos_muji x = 2;
+			thoos x = 2;
 
-			jaba_samma_muji(x < 32768) {
+			jaba_samma(x < 32768) {
 				x = sum(x);
 			}
 			x;
 
-			yedi_muji (x = 4) {
+			yedi (x = 4) {
 				100;
-			} nabhae_chikne {
+			} natra {
 				200;
 			}
 			`,
@@ -511,7 +511,7 @@ func TestJabasammaMujiAndAssignment(t *testing.T) {
 		},
 		{
 			`
-				thoos_muji x = {"foo": "bar"};
+				thoos x = {"foo": "bar"};
 				x["foo"] = 4;
 				x["foo"]
 			`,
@@ -521,20 +521,20 @@ func TestJabasammaMujiAndAssignment(t *testing.T) {
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		if !testIntegerObject(t, evaluated, tt.expected) {
-			t.Fatalf("failed to test JabasammaMujiExpression")
+			t.Fatalf("failed to test JabasammaExpression")
 		}
 	}
 }
 
-func TestGhumaMujiExpression(t *testing.T) {
+func TestGhumaExpression(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected int64
 	}{
 		{
 			`
-			ghuma_muji(thoos_muji i = 0; i < 100; i = i + 1) {
-				sacho_muji;
+			ghuma(thoos i = 0; i < 100; i = i + 1) {
+				sacho;
 			}
 			i;
 			`,
@@ -544,7 +544,7 @@ func TestGhumaMujiExpression(t *testing.T) {
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		if !testIntegerObject(t, evaluated, tt.expected) {
-			t.Fatalf("failed to test JabasammaMujiExpression")
+			t.Fatalf("failed to test JabasammaExpression")
 		}
 	}
 }
@@ -557,9 +557,9 @@ func TestHashMapEval(t *testing.T) {
 	}{
 		{
 			`
-			thoos_muji x = 43;
-			thoos_muji y = {"foo": "bar", "bar": x};
-			lambai_muji(y)
+			thoos x = 43;
+			thoos y = {"foo": "bar", "bar": x};
+			lambai(y)
 			`,
 			2,
 		},
@@ -580,13 +580,13 @@ func TestHashMapEval(t *testing.T) {
 
 func TestCustom(t *testing.T) {
 	program := `
-	thoos_muji checkNumber = kaam_gar_muji(num) {
-		yedi_muji (num > 0) {
-			bhan_muji("Positive");
-		} nabhae_muji (num < 0) {
-			bhan_muji("Negative");
-		} nabhae_chikne {
-			bhan_muji("Zero!");
+	thoos checkNumber = kaam_gar(num) {
+		yedi (num > 0) {
+			bhan("Positive");
+		} nabhae (num < 0) {
+			bhan("Negative");
+		} natra {
+			bhan("Zero!");
 		}
 	};
 

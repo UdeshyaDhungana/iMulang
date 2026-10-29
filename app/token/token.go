@@ -54,19 +54,19 @@ const (
 	RBRACKET = "]"
 
 	// Language Keywords
-	THOOS_MUJI    = "THOOS_MUJI"
-	KAAM_GAR_MUJI = "KAAM_GAR_MUJI"
+	THOOS    = "THOOS"
+	KAAM_GAR = "KAAM_GAR"
 
-	YEDI_MUJI     = "YEDI_MUJI"
-	NABHAE_MUJI   = "NABHAE_MUJI"
-	NABHAE_CHIKNE = "NABHAE_CHIKNE"
-	PATHA_MUJI    = "PATHA_MUJI"
+	YEDI   = "YEDI"
+	NABHAE = "NABHAE"
+	NATRA  = "NATRA"
+	PATHA  = "PATHA"
 
-	SACHO_MUJI = "SACHO_MUJI"
-	JHUT_MUJI  = "JHUT_MUJI"
+	SACHO = "SACHO"
+	JHUT  = "JHUT"
 
-	JABA_SAMMA_MUJI = "JABA_SAMMA_MUJI"
-	GHUMA_MUJI      = "GHUMA_MUJI"
+	JABA_SAMMA = "JABA_SAMMA"
+	GHUMA      = "GHUMA"
 )
 
 func NewToken(t TokenType, r rune) Token {
@@ -78,16 +78,16 @@ func NewTokenFromStr(t TokenType, s string) Token {
 }
 
 var keywords = map[string]TokenType{
-	"thoos_muji":      THOOS_MUJI,
-	"kaam_gar_muji":   KAAM_GAR_MUJI,
-	"yedi_muji":       YEDI_MUJI,
-	"nabhae_chikne":   NABHAE_CHIKNE,
-	"sacho_muji":      SACHO_MUJI,
-	"jhut_muji":       JHUT_MUJI,
-	"patha_muji":      PATHA_MUJI,
-	"jaba_samma_muji": JABA_SAMMA_MUJI,
-	"ghuma_muji":      GHUMA_MUJI,
-	"nabhae_muji":     NABHAE_MUJI,
+	"thoos":      THOOS,
+	"kaam_gar":   KAAM_GAR,
+	"yedi":       YEDI,
+	"natra":      NATRA,
+	"sacho":      SACHO,
+	"jhut":       JHUT,
+	"patha":      PATHA,
+	"jaba_samma": JABA_SAMMA,
+	"ghuma":      GHUMA,
+	"nabhae":     NABHAE,
 }
 
 // this distinguishes reserved keywords from variable names

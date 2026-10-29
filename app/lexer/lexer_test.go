@@ -7,23 +7,23 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `thoos_muji 界 = 5;
-	thoos_muji ten = 10;
+	input := `thoos 界 = 5;
+	thoos ten = 10;
 	
-	thoos_muji add = kaam_gar_muji(x, y) {
+	thoos add = kaam_gar(x, y) {
 		x + y;
 	};
 	
-	thoos_muji result = add(five, ten);
+	thoos result = add(five, ten);
 	!-/*5;
 	5 < 10 > 66;
 	
-	yedi_muji (5 < 10) {
-		patha_muji sacho_muji;
-	} nabhae_muji (3 < 10) {
-	 	patha_muji jhut_muji;
-	} nabhae_chikne {
-	 	patha_muji sacho_muji;
+	yedi (5 < 10) {
+		patha sacho;
+	} nabhae (3 < 10) {
+	 	patha jhut;
+	} natra {
+	 	patha sacho;
 	}
 	
 	10 == 10;
@@ -32,37 +32,37 @@ func TestNextToken(t *testing.T) {
 	"newstring"
 	[newarray, "newArray"]
 
-	jaba_samma_muji(sacho_muji) {
-		jhut_muji;
+	jaba_samma(sacho) {
+		jhut;
 	}
 
-	ghuma_muji(thoos_muji i = 0; i < 100; i = i + 1) {
-		jhut_muji;
+	ghuma(thoos i = 0; i < 100; i = i + 1) {
+		jhut;
 	}
 
 	{"foo": "bar"}
 	69.69
-	$sacho_muji$
+	$sacho$
 	`
 
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
-		{token.THOOS_MUJI, "thoos_muji"},
+		{token.THOOS, "thoos"},
 		{token.IDFIER, "界"},
 		{token.ASSIGN, "="},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
-		{token.THOOS_MUJI, "thoos_muji"},
+		{token.THOOS, "thoos"},
 		{token.IDFIER, "ten"},
 		{token.ASSIGN, "="},
 		{token.INT, "10"},
 		{token.SEMICOLON, ";"},
-		{token.THOOS_MUJI, "thoos_muji"},
+		{token.THOOS, "thoos"},
 		{token.IDFIER, "add"},
 		{token.ASSIGN, "="},
-		{token.KAAM_GAR_MUJI, "kaam_gar_muji"},
+		{token.KAAM_GAR, "kaam_gar"},
 		{token.LPAREN, "("},
 		{token.IDFIER, "x"},
 		{token.COMMA, ","},
@@ -75,7 +75,7 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
 		{token.SEMICOLON, ";"},
-		{token.THOOS_MUJI, "thoos_muji"},
+		{token.THOOS, "thoos"},
 		{token.IDFIER, "result"},
 		{token.ASSIGN, "="},
 		{token.IDFIER, "add"},
@@ -97,32 +97,32 @@ func TestNextToken(t *testing.T) {
 		{token.GT, ">"},
 		{token.INT, "66"},
 		{token.SEMICOLON, ";"},
-		{token.YEDI_MUJI, "yedi_muji"},
+		{token.YEDI, "yedi"},
 		{token.LPAREN, "("},
 		{token.INT, "5"},
 		{token.LT, "<"},
 		{token.INT, "10"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
-		{token.PATHA_MUJI, "patha_muji"},
-		{token.SACHO_MUJI, "sacho_muji"},
+		{token.PATHA, "patha"},
+		{token.SACHO, "sacho"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
-		{token.NABHAE_MUJI, "nabhae_muji"},
+		{token.NABHAE, "nabhae"},
 		{token.LPAREN, "("},
 		{token.INT, "3"},
 		{token.LT, "<"},
 		{token.INT, "10"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
-		{token.PATHA_MUJI, "patha_muji"},
-		{token.JHUT_MUJI, "jhut_muji"},
+		{token.PATHA, "patha"},
+		{token.JHUT, "jhut"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
-		{token.NABHAE_CHIKNE, "nabhae_chikne"},
+		{token.NATRA, "natra"},
 		{token.LBRACE, "{"},
-		{token.PATHA_MUJI, "patha_muji"},
-		{token.SACHO_MUJI, "sacho_muji"},
+		{token.PATHA, "patha"},
+		{token.SACHO, "sacho"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
 		{token.INT, "10"},
@@ -139,17 +139,17 @@ func TestNextToken(t *testing.T) {
 		{token.COMMA, ","},
 		{token.STRING, "newArray"},
 		{token.RBRACKET, "]"},
-		{token.JABA_SAMMA_MUJI, "jaba_samma_muji"},
+		{token.JABA_SAMMA, "jaba_samma"},
 		{token.LPAREN, "("},
-		{token.SACHO_MUJI, "sacho_muji"},
+		{token.SACHO, "sacho"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
-		{token.JHUT_MUJI, "jhut_muji"},
+		{token.JHUT, "jhut"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
-		{token.GHUMA_MUJI, "ghuma_muji"},
+		{token.GHUMA, "ghuma"},
 		{token.LPAREN, "("},
-		{token.THOOS_MUJI, "thoos_muji"},
+		{token.THOOS, "thoos"},
 		{token.IDFIER, "i"},
 		{token.ASSIGN, "="},
 		{token.INT, "0"},
@@ -165,7 +165,7 @@ func TestNextToken(t *testing.T) {
 		{token.INT, "1"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
-		{token.JHUT_MUJI, "jhut_muji"},
+		{token.JHUT, "jhut"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
 		{token.LBRACE, "{"},
